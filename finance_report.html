@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>深圳新基石科学基金会 2022-2025年度财务分析报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a56db;
+            --primary-light: #e8edfb;
+            --red: #dc3545;
+            --green: #198754;
+            --orange: #fd7e14;
+            --gray-100: #f8f9fa;
+            --gray-200: #e9ecef;
+            --gray-300: #dee2e6;
+            --gray-600: #6c757d;
+            --gray-800: #343a40;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--gray-100);
+            color: var(--gray-800);
+            line-height: 1.6;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #1a237e 0%, #283593 50%, #1565c0 100%);
+            color: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 20px rgba(26,86,219,0.3);
+        }
+        .header h1 { font-size: 28px; font-weight: 700; margin-bottom: 8px; }
+        .header p { font-size: 15px; opacity: 0.9; }
+        .header .meta { margin-top: 16px; font-size: 13px; opacity: 0.75; display: flex; gap: 20px; flex-wrap: wrap;}
+
+        /* Cards */
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-800);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .card-title .icon { font-size: 22px; }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .kpi-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            text-align: center;
+        }
+        .kpi-label { font-size: 13px; color: var(--gray-600); margin-bottom: 6px; }
+        .kpi-value { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
+        .kpi-unit { font-size: 13px; font-weight: 400; color: var(--gray-600); margin-left: 2px; }
+        .kpi-sub { font-size: 12px; color: var(--gray-600); margin-top: 6px; }
+        .kpi-up { color: var(--green); }
+        .kpi-down { color: var(--red); }
+
+        /* Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        thead th {
+            background: var(--gray-800);
+            color: white;
+            padding: 11px 14px;
+            text-align: right;
+            font-weight: 600;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        thead th:first-child { text-align: left; border-radius: 8px 0 0 0; }
+        thead th:last-child { border-radius: 0 8px 0 0; }
+        tbody td {
+            padding: 10px 14px;
+            text-align: right;
+            border-bottom: 1px solid var(--gray-200);
+            font-variant-numeric: tabular-nums;
+        }
+        tbody td:first-child { text-align: left; font-weight: 500; color: var(--gray-800); background: var(--gray-100); }
+        tbody tr:hover td { background: #f0f4ff; }
+        tbody tr:hover td:first-child { background: #e8ecfa; }
+        .num-positive { color: var(--green); font-weight: 700; }
+        .num-negative { color: var(--red); font-weight: 700; }
+        .indent { padding-left: 28px !important; font-weight: 400 !important; background: white !important; }
+        .indent-2 { padding-left: 44px !important; font-weight: 400 !important; background: white !important; }
+        .section-row td { font-weight: 700; background: var(--primary-light) !important; border-top: 2px solid var(--primary); }
+        .total-row td { font-weight: 800; font-size: 15px; background: #e8ecfa !important; border-top: 2px solid var(--primary); }
+        .note { font-size: 12px; color: var(--gray-600); margin-top: 10px; line-height: 1.8; }
+
+        /* Charts */
+        .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        @media (max-width: 900px) { .chart-grid { grid-template-columns: 1fr; } }
+        .chart-container { position: relative; height: 360px; width: 100%; }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 24px;
+            color: var(--gray-600);
+            font-size: 13px;
+            margin-top: 20px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-blue { background: #dbeafe; color: #1e40af; }
+        .tag-green { background: #dcfce7; color: #166534; }
+
+        /* Analysis section */
+        .analysis-list { list-style: none; }
+        .analysis-list li {
+            padding: 12px 0;
+            border-bottom: 1px dashed var(--gray-200);
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+        }
+        .analysis-list li:last-child { border-bottom: none; }
+        .analysis-bullet {
+            min-width: 26px; height: 26px;
+            background: var(--primary); color: white;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .analysis-text { font-size: 14px; line-height: 1.7; }
+        .highlight { background: #fff3cd; padding: 2px 4px; border-radius: 3px; font-weight: 600; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+<!-- ===== Header ===== -->
+<div class="header">
+    <h1>📊 深圳新基石科学基金会</h1>
+    <p>2022-2025年度 财务数据分析报告</p>
+    <div class="meta">
+        <span>📅 数据来源：历年审计报告（普华永道中天 / 永柘会计师事务所）</span>
+        <span>📋 报告期间：2022年8月8日（成立日）— 2025年12月31日</span>
+        <span>💰 单位：人民币元</span>
+    </div>
+</div>
+
+<!-- ===== KPI 概览 ===== -->
+<div class="kpi-grid">
+    <div class="kpi-card">
+        <div class="kpi-label">四年累计捐赠收入</div>
+        <div class="kpi-value" style="color:var(--green)">99.50<span class="kpi-unit">亿元</span></div>
+        <div class="kpi-sub">腾讯发起的非公募基金会</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">四年累计业务活动成本</div>
+        <div class="kpi-value" style="color:var(--red)">15.73<span class="kpi-unit">亿元</span></div>
+        <div class="kpi-sub">新基石研究员 + 科学探索奖等</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">2025年末净资产</div>
+        <div class="kpi-value" style="color:var(--primary)">90.92<span class="kpi-unit">亿元</span></div>
+        <div class="kpi-sub">较2024年末减少约3.82亿元</div>
+    </div>
+    <div class="kpi-card">
+        <div class="kpi-label">管理费用率（2025年）</div>
+        <div class="kpi-value" style="color:var(--orange)">0.23<span class="kpi-unit">%</span></div>
+        <div class="kpi-sub">专职员工仅4人，运营高效</div>
+    </div>
+</div>
+
+<!-- ===== 收入支出总表 ===== -->
+<div class="card">
+    <div class="card-title"><span class="icon">📑</span> 历年收入支出汇总表</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:220px;">项目</th>
+                <th>2022年度*<br><small>(8-12月)</small></th>
+                <th>2023年度</th>
+                <th>2024年度</th>
+                <th>2025年度</th>
+                <th>四年合计</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- 收入部分 -->
+            <tr class="section-row"><td>一、收入</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="indent">其中：捐赠收入</td><td>1,400,000,000.00</td><td>8,550,000,000.00</td><td>—</td><td>—</td><td>9,950,000,000.00</td></tr>
+            <tr><td class="indent">提供服务收入（会议注册费等）</td><td>—</td><td>—</td><td>436,595.60</td><td>579,461.45</td><td>1,016,057.05</td></tr>
+            <tr><td class="indent">投资收益</td><td>—</td><td>15,358,931.51</td><td>—</td><td>—</td><td>15,358,931.51</td></tr>
+            <tr><td class="indent">政府补助收入</td><td>—</td><td>—</td><td>—</td><td>49,504.95</td><td>49,504.95</td></tr>
+            <tr><td class="indent">其他收入（银行利息等）</td><td>258,516.29</td><td>197,428,869.24</td><td>246,127,974.37</td><td>213,435,814.72</td><td>657,251,174.62</td></tr>
+            <tr class="total-row"><td>收入合计</td><td>1,400,258,516.29</td><td>8,762,787,800.75</td><td>246,564,569.97</td><td>214,064,781.12</td><td>10,223,675,668.13</td></tr>
+
+            <!-- 费用部分 -->
+            <tr class="section-row"><td>二、费用</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr><td class="indent">业务活动成本</td><td>—</td><td>(312,617,631.06)</td><td>(611,093,617.20)</td><td>(645,051,473.22)</td><td>(1,568,762,721.48)</td></tr>
+            <tr class="indent-2"><td>　　├ 新基石研究员项目</td><td>—</td><td>—</td><td>(508,508,556.66)</td><td>(457,416,358.65)</td><td>(965,924,915.31)</td></tr>
+            <tr class="indent-2"><td>　　├ 科学探索奖</td><td>—</td><td>—</td><td>(82,473,970.59)</td><td>(179,726,120.00)</td><td>(262,200,090.59)</td></tr>
+            <tr class="indent-2"><td>　　└ 跨学科交流合作等其他</td><td>—</td><td>—</td><td>(20,111,089.95)</td><td>(7,908,994.57)</td><td>(28,020,084.52)</td></tr>
+            <tr><td class="indent">管理费用</td><td>(3,883.50)</td><td>(586,149.75)</td><td>(1,231,970.10)</td><td>(1,457,781.44)</td><td>(3,279,784.79)</td></tr>
+            <tr><td class="indent">筹资费用</td><td>—</td><td>(0.02)</td><td>(15,055.87)</td><td>(5,742.29)</td><td>(20,798.18)</td></tr>
+            <tr><td class="indent">其他费用</td><td>—</td><td>(9,974,972.33)</td><td>(1,399.02)</td><td>(11,936.33)</td><td>(9,988,307.68)</td></tr>
+            <tr class="total-row"><td>费用合计</td><td>(3,883.50)</td><td>(323,178,753.16)</td><td>(612,342,042.19)</td><td>(646,526,933.28)</td><td>(1,582,051,612.13)</td></tr>
+
+            <!-- 净资产变动 -->
+            <tr class="section-row"><td>三、净资产变动额</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="total-row">
+                <td>当年净资产变动</td>
+                <td class="num-positive">+1,400,254,632.79</td>
+                <td class="num-positive">+8,439,609,047.59</td>
+                <td class="num-negative">-365,777,472.22</td>
+                <td class="num-negative">-432,462,152.16</td>
+                <td class="num-positive">+8,641,624,056.00</td>
+            </tr>
+
+            <!-- 年末净资产 -->
+            <tr class="section-row"><td>四、年末净资产</td><td></td><td></td><td></td><td></td><td></td></tr>
+            <tr class="total-row">
+                <td>年末净资产总额</td>
+                <td>1,450,254,632.79</td>
+                <td>9,889,863,680.38</td>
+                <td>9,524,086,208.16</td>
+                <td>9,091,624,056.00</td>
+                <td>—</td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="note">* 注：2022年度为成立首年，数据仅涵盖 2022年8月8日至12月31日（不足一年）。<br>
+       数据来源：各年度审计报告 OCR 识别后人工核对整理。金额单位：人民币元。</p>
+</div>
+
+<!-- ===== 图表区域 ===== -->
+<div class="chart-grid">
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-title"><span class="icon">📈</span> 年度收入构成趋势（亿元）</div>
+        <div class="chart-container"><canvas id="chartIncome"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-title"><span class="icon">💸</span> 年度费用构成趋势（亿元）</div>
+        <div class="chart-container"><canvas id="chartExpense"></canvas></div>
+    </div>
+</div>
+
+<div class="chart-grid" style="margin-top:20px;">
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-title"><span class="icon">🏦</span> 年末资产与净资产变化（亿元）</div>
+        <div class="chart-container"><canvas id="chartAssets"></canvas></div>
+    </div>
+    <div class="card" style="margin-bottom:0;">
+        <div class="card-title"><span class="icon">⚖️</span> 收支对比与净变动（亿元）</div>
+        <div class="chart-container"><canvas id="chartBalance"></canvas></div>
+    </div>
+</div>
+
+<!-- ===== 项目支出明细 ===== -->
+<div class="card">
+    <div class="card-title"><span class="icon">🎯</span> 业务活动成本 — 项目支出明细</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:240px;">项目名称</th>
+                <th>2023年度</th>
+                <th>2024年度</th>
+                <th>2025年度</th>
+                <th>三年合计</th>
+                <th>占比</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>新基石研究员项目</td>
+                <td>—</td>
+                <td>508,508,556.66</td>
+                <td>457,416,358.65</td>
+                <td>965,924,915.31</td>
+                <td>61.58%</td>
+            </tr>
+            <tr>
+                <td>科学探索奖</td>
+                <td>—</td>
+                <td>82,473,970.59</td>
+                <td>179,726,120.00</td>
+                <td>262,200,090.59</td>
+                <td>16.72%</td>
+            </tr>
+            <tr>
+                <td>跨学科交流与合作等其他</td>
+                <td>—</td>
+                <td>20,111,089.95</td>
+                <td>7,908,994.57</td>
+                <td>28,020,084.52</td>
+                <td>1.79%</td>
+            </tr>
+            <tr class="total-row">
+                <td>业务活动成本合计</td>
+                <td>312,617,631.06</td>
+                <td>611,093,617.20</td>
+                <td>645,051,473.22</td>
+                <td>1,568,762,721.48</td>
+                <td>100.00%</td>
+            </tr>
+            <tr>
+                <td class="indent">注：2023年未按项目拆分明细</td>
+                <td colspan="5" style="text-align:left;color:var(--gray-600);font-size:13px;"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- ===== 管理费用分析 ===== -->
+<div class="card">
+    <div class="card-title"><span class="icon">🏢</span> 运营效率分析 — 管理费用</div>
+    <table>
+        <thead>
+            <tr>
+                <th style="width:200px;">项目</th>
+                <th>2022*</th>
+                <th>2023</th>
+                <th>2024</th>
+                <th>2025</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>管理费用（元）</td><td>3,883.50</td><td>586,149.75</td><td>1,231,970.10</td><td>1,457,781.44</td></tr>
+            <tr><td>业务活动成本（元）</td><td>—</td><td>312,617,631.06</td><td>611,093,617.20</td><td>645,051,473.22</td></tr>
+            <tr><td>管理费用率</td><td>—</td><td>0.19%</td><td>0.20%</td><td>0.23%</td></tr>
+            <tr><td>全职员工人数</td><td>—</td><td>—</td><td>—</td><td>4人</td></tr>
+            <tr><td>人均工资奖金（元/年）</td><td>—</td><td>—</td><td>—</td><td>245,508.36</td></tr>
+        </tbody>
+    </table>
+    <p class="note" style="margin-top:14px;">💡 核心发现：基金会管理费用率极低（&lt;0.25%），远低于行业平均水平（通常3%-10%）。<br>
+       全职员工仅4人，人均年薪约24.6万元，体现了极高的公益资金使用效率。<br>
+       所有理事及监事均不从基金会领取报酬。</p>
+</div>
+
+<!-- ===== 关键分析 ===== -->
+<div class="card">
+    <div class="card-title"><span class="icon">🔍</span> 关键财务分析</div>
+    <ul class="analysis-list">
+        <li>
+            <span class="analysis-bullet">1</span>
+            <div class="analysis-text">
+                <strong>捐赠收入集中在成立早期：</strong>2022年（成立年）收到<span class="highlight">14亿元</span>原始捐赠，
+                2023年收到<span class="highlight">85.5亿元</span>大额捐赠，两年累计收到捐赠
+                <span class="highlight">99.5亿元</span>。2024、2025年度无现金捐赠收入。
+            </div>
+        </li>
+        <li>
+            <span class="analysis-bullet">2</span>
+            <div class="analysis-text">
+                <strong>"以息养会"模式清晰：</strong>2024-2025年主要收入来源为
+                <span class="highlight">银行存款利息收入</span>（分别2.46亿和2.13亿元），
+                加少量会议注册费和政府补助，体现典型的"本金不动、利息运营"的基金会模式。
+            </div>
+        </li>
+        <li>
+            <span class="analysis-bullet">3</span>
+            <div class="analysis-text">
+                <strong>支出逐年增长：</strong>业务活动成本从2023年的<span class="highlight">3.13亿元</span>
+                增长到2025年的<span class="highlight">6.45亿元</span>，增幅达106%。
+                其中<strong>科学探索奖</strong>支出从2024年的0.82亿元增至2025年的1.80亿元，翻倍以上增长。
+            </div>
+        </li>
+        <li>
+            <span class="analysis-bullet">4</span>
+            <div class="analysis-text">
+                <strong>净资产持续消耗但体量巨大：</strong>2024年末净资产95.24亿元→2025年末90.92亿元，
+                年均下降约4.5亿元（即年度支出超出收入的缺口）。
+                按90亿元规模、年利息约2-2.5亿计，当前支出节奏下基金可持续数十年。
+            </div>
+        </li>
+        <li>
+            <span class="analysis-bullet">5</span>
+            <div class="analysis-text">
+                <strong>资产配置保守稳健：</strong>截至2025年底，货币资金89.44亿元，
+                其中81亿元为<span class="highlight">三个月以上定期存款</span>，
+                仅7亿为活期/现金等价物。无股权等高风险投资，体现了审慎的资产管理策略。
+            </div>
+        </li>
+        <li>
+            <span class="analysis-bullet">6</span>
+            <div class="analysis-text">
+                <strong>审计意见均为标准无保留：</strong>2023-2025年由<span class="highlight">普华永道中天</span>审计，
+                2022年由永柘会计师事务所审计，所有年度均出具标准无保留审计意见。
+                基金会享有深圳市非营利组织免税资格（2022-2026年有效）。
+            </div>
+        </li>
+    </ul>
+</div>
+
+<!-- ===== 审计信息 ===== -->
+<div class="card">
+    <div class="card-title"><span class="icon">✅</span> 审计报告基本信息</div>
+    <table>
+        <thead>
+            <tr>
+                <th>年度</th>
+                <th>会计师事务所</th>
+                <th>审计报告文号</th>
+                <th>审计报告日期</th>
+                <th>审计意见</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>2025</td>
+                <td>普华永道中天（深圳分所）</td>
+                <td>深审字(2026)第0053号</td>
+                <td>2026年3月24日</td>
+                <td><span class="tag tag-green">标准无保留</span></td>
+            </tr>
+            <tr>
+                <td>2024</td>
+                <td>普华永道中天（深圳分所）</td>
+                <td>深审字(2025)第0048号</td>
+                <td>2025年3月24日</td>
+                <td><span class="tag tag-green">标准无保留</span></td>
+            </tr>
+            <tr>
+                <td>2023</td>
+                <td>普华永道中天（深圳分所）</td>
+                <td>深审字(2024)第0490号</td>
+                <td>2024年3月27日</td>
+                <td><span class="tag tag-green">标准无保留</span></td>
+            </tr>
+            <tr>
+                <td>2022</td>
+                <td>永柘会计师事务所</td>
+                <td>已赋码扫描件</td>
+                <td>2023年5月20日</td>
+                <td><span class="tag tag-green">标准无保留</span></td>
+            </tr>
+        </tbody>
+    </table>
+    <p class="note" style="margin-top:14px;">🏛️ 基础信息：非公募基金会 | 原始基金：5,000万元 | 发起方：深圳市腾讯计算机系统有限公司 + 腾讯科技（北京）有限公司<br>
+       📌 法定代表人：王妩蓉（2025年报）/ 陈菊红（2022-2023年报）| 理事长：施一公 | 业务主管单位：深圳市科技创新局</p>
+</div>
+
+<div class="footer">
+    <p>本报告基于深圳新基石科学基金会 2022-2025 年度审计报告（PDF 扫描件经 OCR 识别 + 人工核对）生成</p>
+    <p>数据仅供参考，正式财务数据请以原审计报告为准 | 生成日期：2026年4月9日</p>
+</div>
+
+</div><!-- end container -->
+
+<script>
+// 格式化数字（亿元）
+const fmt = v => (v / 1e8).toFixed(2);
+
+// ========== 图表全局配置 ==========
+Chart.defaults.font.family = '-apple-system, "PingFang SC", "Microsoft YaHei", sans-serif';
+Chart.defaults.color = '#6c757d';
+
+// ---------- 收入构成图 ----------
+new Chart(document.getElementById('chartIncome'), {
+    type: 'bar',
+    data: {
+        labels: ['2022*\n(5个月)', '2023', '2024', '2025'],
+        datasets: [
+            {
+                label: '捐赠收入',
+                data: [14.00, 85.50, 0, 0],
+                backgroundColor: '#198754',
+                borderRadius: 4,
+            },
+            {
+                label: '银行利息等其他收入',
+                data: [0.0026, 1.97, 2.46, 2.13],
+                backgroundColor: '#0d6efd',
+                borderRadius: 4,
+            },
+            {
+                label: '会议/政府补助等',
+                data: [0, 0, 0.04, 0.06],
+                backgroundColor: '#fd7e14',
+                borderRadius: 4,
+            },
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'top', labels: { usePointStyle: true, padding: 16 }},
+            tooltip: {
+                callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} 亿元` }
+            }
+        },
+        scales: {
+            x: { stacked: true, grid: { display: false } },
+            y: { 
+                stacked: true,
+                title: { display: true, text: '金额（亿元）' },
+                ticks: { callback: v => v + '亿' }
+            }
+        }
+    }
+});
+
+// ---------- 费用构成图 ----------
+new Chart(document.getElementById('chartExpense'), {
+    type: 'bar',
+    data: {
+        labels: ['2022*', '2023', '2024', '2025'],
+        datasets: [
+            {
+                label: '新基石研究员项目',
+                data: [0, 0, 5.09, 4.57],
+                backgroundColor: '#dc3545',
+                borderRadius: 4,
+            },
+            {
+                label: '科学探索奖',
+                data: [0, 0, 0.82, 1.80],
+                backgroundColor: '#e83e8c',
+                borderRadius: 4,
+            },
+            {
+                label: '跨学科交流等其他项目',
+                data: [0, 3.13, 2.01, 0.79],
+                backgroundColor: '#6f42c1',
+                borderRadius: 4,
+            },
+            {
+                label: '管理及其他费用',
+                data: [0, 0.11, 0.01, 0.01],
+                backgroundColor: '#adb5bd',
+                borderRadius: 4,
+            },
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        indexAxis: 'y' !== 'y',
+        plugins: {
+            legend: { position: 'top', labels: { usePointStyle: true, padding: 16 }},
+            tooltip: {
+                callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} 亿元` }
+            }
+        },
+        scales: {
+            x: { stacked: true, title: { display: true, text: '金额（亿元）' }, ticks: { callback: v => v + '亿' }},
+            y: { stacked: true, grid: { display: false }}
+        }
+    }
+});
+
+// ---------- 资产净资产变化图 ----------
+new Chart(document.getElementById('chartAssets'), {
+    type: 'line',
+    data: {
+        labels: ['2022末', '2023末', '2024末', '2025末'],
+        datasets: [
+            {
+                label: '资产总计',
+                data: [14.50, 98.94, 95.57, 95.57],
+                borderColor: '#1a56db',
+                backgroundColor: 'rgba(26,86,219,0.08)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2.5,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            },
+            {
+                label: '净资产合计',
+                data: [14.50, 98.90, 95.24, 90.92],
+                borderColor: '#198754',
+                backgroundColor: 'rgba(25,135,84,0.08)',
+                fill: true,
+                tension: 0.3,
+                borderWidth: 2.5,
+                pointRadius: 5,
+                pointHoverRadius: 7,
+            },
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'top', labels: { usePointStyle: true, padding: 16 }},
+            tooltip: {
+                callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw.toFixed(2)} 亿元` }
+            }
+        },
+        scales: {
+            y: { title: { display: true, text: '金额（亿元）' }, ticks: { callback: v => v + '亿' }},
+            x: { grid: { display: false }}
+        }
+    }
+});
+
+// ---------- 收支对比图 ----------
+new Chart(document.getElementById('chartBalance'), {
+    type: 'bar',
+    data: {
+        labels: ['2022*\n(5个月)', '2023', '2024', '2025'],
+        datasets: [
+            {
+                label: '总收入',
+                data: [14.00, 87.63, 2.47, 2.14],
+                backgroundColor: 'rgba(25,135,84,0.7)',
+                borderRadius: 4,
+            },
+            {
+                label: '总费用',
+                data: [0, 3.23, 6.12, 6.47],
+                backgroundColor: 'rgba(220,53,69,0.7)',
+                borderRadius: 4,
+            },
+            {
+                type: 'line',
+                label: '净变动',
+                data: [14.00, 84.40, -3.66, -4.32],
+                borderColor: '#fd7e14',
+                backgroundColor: 'transparent',
+                borderWidth: 3,
+                pointRadius: 6,
+                pointBackgroundColor: '#fd7e14',
+                tension: 0.3,
+            },
+        ]
+    },
+    options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: {
+            legend: { position: 'top', labels: { usePointStyle: true, padding: 16 }},
+            tooltip: {
+                callbacks: { label: ctx => `${ctx.dataset.label}: ${ctx.raw >= 0 ? '+' : ''}${ctx.raw.toFixed(2)} 亿元` }
+            }
+        },
+        scales: {
+            y: { title: { display: true, text: '金额（亿元）' }, ticks: { callback: v => v + '亿' }},
+            x: { grid: { display: false }}
+        }
+    }
+});
+</script>
+
+</body>
+</html>
